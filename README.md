@@ -616,49 +616,7 @@ For production environments, refer to the [DEPLOYMENT.md](docs/DEPLOYMENT.md) gu
 
 ---
 
-## 📸 Screenshots
 
-<div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=rect&color=90CAF9&height=2&section=header" width="80%" />
-</div>
-
-> 🖼️ **Screenshots will be added here.** Below are placeholder sections for key interface views.
-
-### 🏠 Dashboard View
-<div align="center">
-  <img src="https://via.placeholder.com/1200x700/0D47A1/FFFFFF?text=Enterprise+Dashboard+Preview" alt="Dashboard" width="90%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);" />
-  <p><i>Real-time business intelligence dashboard with interactive charts and KPI widgets</i></p>
-</div>
-
-### 💳 POS Billing Interface
-<div align="center">
-  <img src="https://via.placeholder.com/1200x700/1976D2/FFFFFF?text=POS+Billing+Interface" alt="POS" width="90%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);" />
-  <p><i>Fast, intuitive point-of-sale billing with barcode scanning and quick product search</i></p>
-</div>
-
-### 📦 Inventory Management
-<div align="center">
-  <img src="https://via.placeholder.com/1200x700/42A5F5/FFFFFF?text=Inventory+Management" alt="Inventory" width="90%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);" />
-  <p><i>Comprehensive inventory tracking with stock alerts, batch management, and expiry monitoring</i></p>
-</div>
-
-### 📊 Reports & Analytics
-<div align="center">
-  <img src="https://via.placeholder.com/1200x700/90CAF9/000000?text=Reports+%26+Analytics" alt="Reports" width="90%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);" />
-  <p><i>Professional reports with export capabilities and interactive data visualization</i></p>
-</div>
-
-### 🌙 Dark Mode
-<div align="center">
-  <img src="https://via.placeholder.com/1200x700/1A237E/FFFFFF?text=Dark+Mode+Interface" alt="Dark Mode" width="90%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);" />
-  <p><i>Elegant dark theme for low-light environments with glassmorphism effects</i></p>
-</div>
-
-<div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=rect&color=90CAF9&height=2&section=header" width="80%" />
-</div>
-
----
 
 ## 🗺 Future Roadmap
 
