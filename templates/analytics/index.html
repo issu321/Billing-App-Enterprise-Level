@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Analytics - {{ business_name }}{% endblock %}
+{% block page_title %}Analytics{% endblock %}
+{% block content %}
+
+<div class="liquid-glass rounded-2xl p-5 mb-6">
+    <h3 class="text-lg font-bold text-slate-800 mb-4">Sales Analytics (30 Days)</h3>
+    <canvas id="analyticsChart" height="80"></canvas>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <div class="liquid-glass rounded-2xl p-5">
+        <h3 class="font-bold text-slate-800 mb-3">Top Products</h3>
+        {% for p in top_products %}
+        <div class="flex items-center justify-between py-2 border-b border-slate-100 last:border-0"><span class="text-sm text-slate-700">{{ p.product_name }}</span><span class="text-sm font-bold text-indigo-600">{{ "%.0f"|format(p.total_quantity) }} sold</span></div>
+        {% else %}<p class="text-slate-400 text-center py-4">No data</p>{% endfor %}
+    </div>
+    <div class="liquid-glass rounded-2xl p-5">
+        <h3 class="font-bold text-slate-800 mb-3">Yearly Comparison</h3>
+        {% for y in yearly_comparison %}
+        <div class="flex items-center justify-between py-2 border-b border-slate-100 last:border-0"><span class="text-sm text-slate-700">{{ y.year }}</span><span class="text-sm font-bold {{ 'text-emerald-600' if y.profit > 0 else 'text-red-600' }}">{{ "%.2f"|format(y.sales) }}</span></div>
+        {% endfor %}
+    </div>
+</div>
+<script>
+const ctx = document.getElementById('analyticsChart').getContext('2d');
+const data = {{ daily_sales|tojson }};
+new Chart(ctx, {type: 'line', data: {labels: data.map(d => d.day), datasets: [{label: 'Sales', data: data.map(d => d.amount), borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)', borderWidth: 2, fill: true, tension: 0.4}]}, options: {responsive: true, plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true, ticks: {callback: v => 'Rs.' + v}}, x: {grid: {display: false}}}}}});
+</script>
+
+{% endblock %}

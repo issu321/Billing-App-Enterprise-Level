@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Customer Report - {{ business_name }}{% endblock %}
+{% block page_title %}Customer Report{% endblock %}
+{% block content %}
+
+<div class="liquid-glass rounded-2xl p-6">
+    <h3 class="text-lg font-bold text-slate-800 mb-4">Customer Report</h3>
+    <div class="overflow-x-auto">
+        <table class="w-full glass-table">
+            <thead><tr><th class="px-4 py-3 text-slate-600">Customer</th><th class="px-4 py-3 text-slate-600 text-right">Purchases</th><th class="px-4 py-3 text-slate-600 text-right">Total</th><th class="px-4 py-3 text-slate-600 text-right">Avg Order</th></tr></thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for c in customers %}
+                <tr class="hover:bg-white/40"><td class="px-4 py-3 text-sm font-medium text-slate-800">{{ c.customer_name or 'Walk-in' }}</td><td class="px-4 py-3 text-sm text-slate-600 text-right">{{ c.purchase_count }}</td><td class="px-4 py-3 text-sm font-bold text-indigo-600 text-right">{{ "%.2f"|format(c.total_amount) }}</td><td class="px-4 py-3 text-sm text-slate-600 text-right">{{ "%.2f"|format(c.avg_order) }}</td></tr>
+                {% else %}<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400">No data</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

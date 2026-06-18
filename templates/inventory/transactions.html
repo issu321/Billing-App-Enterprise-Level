@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Inventory Transactions - {{ business_name }}{% endblock %}
+{% block page_title %}Inventory Transactions{% endblock %}
+{% block content %}
+
+<div class="liquid-glass rounded-2xl overflow-hidden">
+    <div class="p-4 border-b border-white/40"><h3 class="font-bold text-slate-800">Inventory Transactions</h3></div>
+    <div class="overflow-x-auto">
+        <table class="w-full glass-table">
+            <thead><tr><th class="px-4 py-3 text-slate-600">Product</th><th class="px-4 py-3 text-slate-600">Type</th><th class="px-4 py-3 text-slate-600">Qty</th><th class="px-4 py-3 text-slate-600">Reference</th><th class="px-4 py-3 text-slate-600">Date</th></tr></thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for t in transactions.items %}
+                <tr class="hover:bg-white/40 transition-colors">
+                    <td class="px-4 py-3 text-sm text-slate-700">{{ t.product_name or '-' }}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 text-xs font-medium rounded-lg bg-blue-50 text-blue-700">{{ t.transaction_type|title }}</span></td>
+                    <td class="px-4 py-3 text-sm font-medium {{ 'text-emerald-600' if t.quantity > 0 else 'text-red-600' }}">{{ "%.2f"|format(t.quantity) }}</td>
+                    <td class="px-4 py-3 text-sm text-slate-500">{{ t.reference_number or '-' }}</td>
+                    <td class="px-4 py-3 text-xs text-slate-500">{{ t.created_at.strftime('%b %d, %H:%M') if t.created_at else '-' }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="px-4 py-8 text-center text-slate-400">No transactions</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

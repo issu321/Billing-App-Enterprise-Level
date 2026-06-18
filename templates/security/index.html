@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Security - {{ business_name }}{% endblock %}
+{% block page_title %}Security & Audit{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="liquid-glass rounded-xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center"><i class="fas fa-clipboard-list text-blue-600"></i></div>
+        <div><p class="text-2xl font-bold text-slate-800">{{ total_logs }}</p><p class="text-xs text-slate-500">Audit Logs</p></div>
+    </div>
+    <div class="liquid-glass rounded-xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center"><i class="fas fa-exclamation-triangle text-red-600"></i></div>
+        <div><p class="text-2xl font-bold text-red-600">{{ failed_logins }}</p><p class="text-xs text-slate-500">Failed Logins</p></div>
+    </div>
+    <a href="{{ url_for('security.users') }}" class="liquid-glass rounded-xl p-4 flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:shadow-lg transition-all hover:-translate-y-0.5">
+        <i class="fas fa-user-cog text-xl"></i><span class="font-semibold">Manage Users</span>
+    </a>
+</div>
+
+<div class="liquid-glass rounded-2xl overflow-hidden">
+    <div class="p-4 border-b border-white/40 flex items-center justify-between">
+        <h3 class="font-bold text-slate-800">Recent Audit Logs</h3>
+        <a href="{{ url_for('security.audit_logs') }}" class="text-sm text-indigo-600 hover:underline font-medium">View All</a>
+    </div>
+    <div class="overflow-x-auto max-h-96 overflow-y-auto">
+        <table class="w-full glass-table">
+            <thead class="sticky top-0"><tr><th class="px-4 py-3 text-slate-600 bg-indigo-50/50">Action</th><th class="px-4 py-3 text-slate-600 bg-indigo-50/50">Entity</th><th class="px-4 py-3 text-slate-600 bg-indigo-50/50">User</th><th class="px-4 py-3 text-slate-600 bg-indigo-50/50">Description</th><th class="px-4 py-3 text-slate-600 bg-indigo-50/50">Time</th></tr></thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for log in logs %}
+                <tr class="hover:bg-white/40 transition-colors">
+                    <td class="px-4 py-2.5"><span class="px-2 py-1 text-xs font-medium rounded-lg {% if log.status == 'success' %}bg-emerald-50 text-emerald-700{% else %}bg-red-50 text-red-700{% endif %}">{{ log.action|title }}</span></td>
+                    <td class="px-4 py-2.5 text-sm text-slate-600">{{ log.entity_type|title }}</td>
+                    <td class="px-4 py-2.5 text-sm text-slate-600">{{ log.user_name or 'System' }}</td>
+                    <td class="px-4 py-2.5 text-sm text-slate-700">{{ log.description }}</td>
+                    <td class="px-4 py-2.5 text-xs text-slate-500">{{ log.created_at.strftime('%b %d, %H:%M') if log.created_at else '-' }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="px-4 py-8 text-center text-slate-400">No audit logs</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

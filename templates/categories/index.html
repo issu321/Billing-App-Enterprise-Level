@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Categories - {{ business_name }}{% endblock %}
+{% block page_title %}Categories{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Category List -->
+    <div class="lg:col-span-2">
+        <div class="liquid-glass rounded-2xl overflow-hidden">
+            <div class="p-4 border-b border-white/40 flex items-center justify-between">
+                <h3 class="font-bold text-slate-800">All Categories ({{ stats.total }})</h3>
+            </div>
+            <div class="divide-y divide-slate-100">
+                {% for category in categories %}
+                <div class="flex items-center justify-between p-4 hover:bg-white/30 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: {{ category.color }}20;">
+                            <i class="fas {{ category.icon or 'fa-tag' }}" style="color: {{ category.color }};"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-slate-800">{{ category.name }}</p>
+                            {% if category.description %}
+                            <p class="text-xs text-slate-500">{{ category.description }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="badge-glass px-2 py-1 rounded-lg text-xs font-medium">{{ category.products|length if category.products else 0 }} products</span>
+                        <button onclick="editCategory({{ category.id }}, '{{ category.name }}', '{{ category.description }}', '{{ category.color }}', {{ category.parent_id or 'null' }})" class="p-2 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-amber-500 transition-colors">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <form method="POST" action="{{ url_for('categories.delete', id=category.id) }}" class="inline" onsubmit="return confirmDelete()">
+                            <button type="submit" class="p-2 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-red-500 transition-colors">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <div class="p-8 text-center text-slate-400">
+                    <i class="fas fa-tags text-4xl mb-2"></i>
+                    <p>No categories yet</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Category -->
+    <div>
+        <div class="liquid-glass rounded-2xl p-5">
+            <h3 class="font-bold text-slate-800 mb-4">Add Category</h3>
+            <form method="POST" action="{{ url_for('categories.create') }}" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Name *</label>
+                    <input type="text" name="name" required class="w-full px-4 py-2.5 rounded-xl bg-white/60 border border-white/60 input-focus text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Code</label>
+                    <input type="text" name="code" class="w-full px-4 py-2.5 rounded-xl bg-white/60 border border-white/60 input-focus text-sm font-mono">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
+                    <textarea name="description" rows="3" class="w-full px-4 py-2.5 rounded-xl bg-white/60 border border-white/60 input-focus text-sm resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Color</label>
+                    <input type="color" name="color" value="#4F46E5" class="w-full h-10 rounded-xl bg-white/60 border border-white/60 input-focus">
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:shadow-lg transition-all btn-glow">
+                    <i class="fas fa-plus mr-2"></i>Add Category
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-backdrop absolute inset-0" onclick="closeEditModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="liquid-glass-strong rounded-2xl shadow-2xl w-full max-w-md p-6 relative z-10">
+            <h3 class="text-lg font-bold text-slate-800 mb-4">Edit Category</h3>
+            <form method="POST" id="editForm" action="" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Name</label>
+                    <input type="text" name="name" id="editName" required class="w-full px-4 py-2.5 rounded-xl bg-white/60 border border-white/60 input-focus text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
+                    <textarea name="description" id="editDescription" rows="3" class="w-full px-4 py-2.5 rounded-xl bg-white/60 border border-white/60 input-focus text-sm resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Color</label>
+                    <input type="color" name="color" id="editColor" class="w-full h-10 rounded-xl bg-white/60 border border-white/60 input-focus">
+                </div>
+                <div class="flex items-center gap-3">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="is_active" id="editIsActive" checked class="w-4 h-4 rounded border-slate-300 text-indigo-600">
+                        <span class="text-sm text-slate-700">Active</span>
+                    </label>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeEditModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-medium hover:bg-slate-200 transition-colors">Cancel</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:shadow-lg transition-all">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function editCategory(id, name, description, color, parentId) {
+    document.getElementById('editForm').action = `/categories/edit/${id}`;
+    document.getElementById('editName').value = name;
+    document.getElementById('editDescription').value = description || '';
+    document.getElementById('editColor').value = color || '#4F46E5';
+    document.getElementById('editModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
+}
+</script>
+{% endblock %}

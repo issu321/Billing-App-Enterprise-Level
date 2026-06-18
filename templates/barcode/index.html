@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Barcode - {{ business_name }}{% endblock %}
+{% block page_title %}Barcode & QR Generator{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Barcode Generator -->
+    <div class="liquid-glass rounded-2xl p-6">
+        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fas fa-barcode text-indigo-500"></i>Generate Barcode</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">Data</label>
+                <input type="text" id="barcodeData" class="w-full px-4 py-2.5 rounded-xl bg-white/60 border border-white/60 input-focus text-sm" placeholder="Enter SKU, barcode, or text">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">Type</label>
+                <select id="barcodeType" class="w-full px-4 py-2.5 rounded-xl bg-white/60 border border-white/60 input-focus text-sm">
+                    {% for bt in barcode_types %}<option value="{{ bt.code }}">{{ bt.name }} - {{ bt.description }}</option>{% endfor %}
+                </select>
+            </div>
+            <button onclick="generateBarcode()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:shadow-lg btn-glow">Generate Barcode</button>
+            <div id="barcodeResult" class="text-center py-4 hidden">
+                <img id="barcodeImage" src="" alt="Barcode" class="mx-auto max-w-full">
+                <button onclick="downloadBarcode()" class="mt-3 px-4 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm hover:bg-slate-200"><i class="fas fa-download mr-2"></i>Download</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- QR Code Generator -->
+    <div class="liquid-glass rounded-2xl p-6">
+        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fas fa-qrcode text-indigo-500"></i>Generate QR Code</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">Data / URL / Text</label>
+                <textarea id="qrData" rows="3" class="w-full px-4 py-2.5 rounded-xl bg-white/60 border border-white/60 input-focus text-sm resize-none" placeholder="Enter text, URL, or any data..."></textarea>
+            </div>
+            <button onclick="generateQR()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium hover:shadow-lg btn-glow">Generate QR Code</button>
+            <div id="qrResult" class="text-center py-4 hidden">
+                <img id="qrImage" src="" alt="QR Code" class="mx-auto max-w-[200px]">
+                <button onclick="downloadQR()" class="mt-3 px-4 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm hover:bg-slate-200"><i class="fas fa-download mr-2"></i>Download</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- UPI QR -->
+    <div class="liquid-glass rounded-2xl p-6 lg:col-span-2">
+        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fas fa-rupee-sign text-indigo-500"></i>UPI Payment QR</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">UPI ID</label>
+                <input type="text" id="upiId" class="w-full px-4 py-2.5 rounded-xl bg-white/60 border border-white/60 input-focus text-sm" placeholder="name@upi">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">Payee Name</label>
+                <input type="text" id="upiName" class="w-full px-4 py-2.5 rounded-xl bg-white/60 border border-white/60 input-focus text-sm" placeholder="Business Name">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">Amount (Optional)</label>
+                <input type="number" id="upiAmount" step="0.01" class="w-full px-4 py-2.5 rounded-xl bg-white/60 border border-white/60 input-focus text-sm" placeholder="0.00">
+            </div>
+        </div>
+        <button onclick="generateUPIQR()" class="mt-4 px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium hover:shadow-lg">Generate UPI QR</button>
+        <div id="upiResult" class="text-center py-4 hidden">
+            <img id="upiImage" src="" alt="UPI QR" class="mx-auto max-w-[200px]">
+            <p class="text-sm text-slate-500 mt-2">Scan with any UPI app</p>
+        </div>
+    </div>
+</div>
+
+<script>
+async function generateBarcode() {
+    const data = document.getElementById('barcodeData').value;
+    const type = document.getElementById('barcodeType').value;
+    if (!data) return alert('Please enter barcode data');
+    
+    const resultDiv = document.getElementById('barcodeResult');
+    const img = document.getElementById('barcodeImage');
+    
+    try {
+        const response = await fetch('{{ url_for("barcode.generate") }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({data, barcode_type: type})
+        });
+        const data_r = await response.json();
+        if (data_r.success) {
+            img.src = data_r.data;
+            resultDiv.classList.remove('hidden');
+        }
+    } catch (e) { alert('Error generating barcode'); }
+}
+
+async function generateQR() {
+    const data = document.getElementById('qrData').value;
+    if (!data) return alert('Please enter QR data');
+    
+    const resultDiv = document.getElementById('qrResult');
+    const img = document.getElementById('qrImage');
+    
+    try {
+        const response = await fetch('{{ url_for("barcode.generate_qr") }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({data, size: 10})
+        });
+        const data_r = await response.json();
+        if (data_r.success) {
+            img.src = data_r.data;
+            resultDiv.classList.remove('hidden');
+        }
+    } catch (e) { alert('Error generating QR'); }
+}
+
+async function generateUPIQR() {
+    const upiId = document.getElementById('upiId').value;
+    const name = document.getElementById('upiName').value;
+    const amount = document.getElementById('upiAmount').value;
+    if (!upiId) return alert('Please enter UPI ID');
+    
+    try {
+        const response = await fetch('{{ url_for("barcode.generate_upi_qr") }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({upi_id: upiId, name, amount})
+        });
+        const data = await response.json();
+        if (data.success) {
+            document.getElementById('upiImage').src = data.data;
+            document.getElementById('upiResult').classList.remove('hidden');
+        }
+    } catch (e) { alert('Error generating UPI QR'); }
+}
+
+function downloadBarcode() { downloadImage('barcodeImage', 'barcode.png'); }
+function downloadQR() { downloadImage('qrImage', 'qrcode.png'); }
+
+function downloadImage(imgId, filename) {
+    const img = document.getElementById(imgId);
+    const a = document.createElement('a');
+    a.href = img.src;
+    a.download = filename;
+    a.click();
+}
+</script>
+{% endblock %}
