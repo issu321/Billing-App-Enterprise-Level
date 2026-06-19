@@ -65,6 +65,66 @@
 
 ---
 
+## 📊 System Workflow Flowchart
+
+The following flowchart illustrates the complete end-to-end workflow of the Enterprise Billing System, including setup, authentication, inventory management, POS billing, payments, reporting, analytics, backup & recovery, and administrative operations.
+
+<div align="center">
+
+<img src="flowchart.png" alt="Enterprise Billing System Flowchart" width="100%">
+
+</div>
+
+### Flowchart Covers
+
+✅ First Launch Setup Wizard  
+✅ Business Configuration  
+✅ Admin Authentication  
+✅ Dashboard Operations  
+✅ Product Management  
+✅ Category Management  
+✅ Inventory Management  
+✅ Customer Management  
+✅ Supplier Management  
+✅ POS Billing Workflow  
+✅ Barcode Generation & Scanning  
+✅ QR Code Generation & Scanning  
+✅ Multi-Payment Processing  
+✅ Invoice Generation  
+✅ Reporting & Analytics  
+✅ Backup & Recovery  
+✅ Admin Panel Management  
+✅ Business Intelligence Workflow  
+
+---
+
+### Workflow Overview
+
+```text
+Application Start
+        │
+        ▼
+ First Launch Setup
+        │
+        ▼
+  Admin Login
+        │
+        ▼
+    Dashboard
+        │
+ ┌──────┼──────┐
+ ▼      ▼      ▼
+Products Inventory Billing
+ │         │      │
+ ▼         ▼      ▼
+Reports Analytics Payments
+        │
+        ▼
+ Business Growth
+```
+
+**Flowchart File:** `flowchart.png`
+
 ## 🎯 Project Overview
 
 <div align="center">
